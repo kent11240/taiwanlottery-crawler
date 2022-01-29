@@ -7,7 +7,6 @@ import com.taiwanlottery.crawler.vo.Prize;
 import com.taiwanlottery.crawler.vo.Ticket;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
@@ -38,36 +37,46 @@ public class CrawlerService {
     }
 
     private List<TicketURL> fetchTicketsURLs() throws CrawlerException {
-        Document document = connect(TICKETS_HOME_URL);
+        Elements tableRows = connect(TICKETS_HOME_URL).select(".tableFull tr");
 
-        Elements elements = document.select(".tableFull a:not(.txt_link)");
+        List<TicketURL> ticketURLs = new ArrayList<>();
+        for (int i = 0; i < MAX_TICKETS_SIZE * 4; i += 4) {
+            String[] nameId = tableRows.get(i + 1).select("td:nth-child(1)").text().split("/");
+            long bet = Long.parseLong(StringUtils.removeNonDigitCharacters(tableRows.get(i + 1).select("td:nth-child(2)").text()));
+            Elements urls = tableRows.get(i + 2).select("td:nth-child(5) a");
+            String url;
+            if (urls.size() == 1) {
+                url = urls.get(0).attr("href");
+            } else {
+                url = urls.get(1).attr("href");
+            }
 
-        return elements.stream()
-                .limit(MAX_TICKETS_SIZE)
-                .map(element -> TicketURL.builder()
-                        .id(Integer.parseInt(element.attr("href").split("#")[1]))
-                        .url(element.attr("href"))
-                        .build())
-                .collect(Collectors.toList());
+            ticketURLs.add(TicketURL.builder()
+                    .id(Integer.parseInt(nameId[1].trim()))
+                    .name(nameId[0].trim())
+                    .bet(bet)
+                    .url(url)
+                    .build());
+        }
+
+        return ticketURLs;
     }
 
     private Ticket fetchTicket(TicketURL ticketURL) throws CrawlerException {
-        Document document = connect(ticketURL.getUrl());
-
         Ticket ticket = new Ticket();
         ticket.setId(ticketURL.getId());
+        ticket.setName(ticketURL.getName());
+        ticket.setBet(ticketURL.getBet());
 
-        Element ticketDiv = document.select("#" + ticketURL.getId()).parents().get(1);
-
-        String name = ticketDiv.select("p").get(1).text();
-        ticket.setName(name.substring(name.indexOf("：") + 1, name.indexOf(" ")));
-
-        Elements prizeTds = ticketDiv.select("tbody tr:not(.td_hm) td");
+        Elements prizeTableData = connect(ticketURL.getUrl())
+                .select("#" + ticketURL.getId())
+                .parents().get(1)
+                .select("tbody tr:not(.td_hm) td");
 
         List<Prize> prizes = new ArrayList<>();
-        for (int i = 0; i < prizeTds.size(); i += 2) {
-            String winText = prizeTds.get(i).text();
-            String amountText = prizeTds.get(i + 1).text();
+        for (int i = 0; i < prizeTableData.size(); i += 2) {
+            String winText = prizeTableData.get(i).text();
+            String amountText = prizeTableData.get(i + 1).text();
 
             if (winText.equals("發行張數")) {
                 ticket.setTotalAmount(Long.parseLong(StringUtils.removeNonDigitCharacters(amountText)));

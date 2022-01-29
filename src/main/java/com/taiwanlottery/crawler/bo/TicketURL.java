@@ -7,5 +7,7 @@ import lombok.Data;
 @Builder
 public class TicketURL {
     private int id;
+    private String name;
+    private long bet;
     private String url;
 }

@@ -1,47 +1,44 @@
 package com.taiwanlottery.crawler.service;
 
 import com.taiwanlottery.crawler.bo.TicketURL;
-import com.taiwanlottery.crawler.exception.DataAccessException;
+import com.taiwanlottery.crawler.exception.CrawlerException;
 import com.taiwanlottery.crawler.util.StringUtils;
 import com.taiwanlottery.crawler.vo.Prize;
 import com.taiwanlottery.crawler.vo.Ticket;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TicketServiceJsoup implements TicketService {
+public class CrawlerService {
     private static final String TICKETS_HOME_URL = "https://www.taiwanlottery.com.tw/info/instant/sale.aspx";
     private static final int MAX_TICKETS_SIZE = 40;
 
-    private final JsoupService jsoupService;
-
-    public TicketServiceJsoup(JsoupService jsoupService) {
-        this.jsoupService = jsoupService;
-    }
-
-    public List<Ticket> fetchAll() throws DataAccessException {
+    public List<Ticket> crawlAll() throws CrawlerException {
         List<TicketURL> ticketURLs = fetchTicketsURLs();
 
         List<Ticket> tickets = new ArrayList<>();
         for (TicketURL ticketURL : ticketURLs) {
             try {
-                tickets.add(fetchSingle(ticketURL));
-            } catch (DataAccessException ignored) {
+                tickets.add(fetchTicket(ticketURL));
+            } catch (CrawlerException ignored) {
+                System.out.println("bad ticket: " + ticketURL);
             }
         }
 
         return tickets;
     }
 
-    private List<TicketURL> fetchTicketsURLs() throws DataAccessException {
-        Document document = jsoupService.get(TICKETS_HOME_URL);
+    private List<TicketURL> fetchTicketsURLs() throws CrawlerException {
+        Document document = connect(TICKETS_HOME_URL);
 
         Elements elements = document.select(".tableFull a:not(.txt_link)");
 
@@ -54,8 +51,8 @@ public class TicketServiceJsoup implements TicketService {
                 .collect(Collectors.toList());
     }
 
-    private Ticket fetchSingle(TicketURL ticketURL) throws DataAccessException {
-        Document document = jsoupService.get(ticketURL.getUrl());
+    private Ticket fetchTicket(TicketURL ticketURL) throws CrawlerException {
+        Document document = connect(ticketURL.getUrl());
 
         Ticket ticket = new Ticket();
         ticket.setId(ticketURL.getId());
@@ -88,5 +85,15 @@ public class TicketServiceJsoup implements TicketService {
                 .collect(Collectors.toList()));
 
         return ticket;
+    }
+
+    private Document connect(String url) throws CrawlerException {
+        try {
+            return Jsoup.connect(url)
+                    .maxBodySize(Integer.MAX_VALUE)
+                    .get();
+        } catch (IOException e) {
+            throw new CrawlerException(e);
+        }
     }
 }

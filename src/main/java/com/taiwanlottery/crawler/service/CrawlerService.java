@@ -1,6 +1,6 @@
 package com.taiwanlottery.crawler.service;
 
-import com.taiwanlottery.crawler.bo.TicketURL;
+import com.taiwanlottery.crawler.bo.RawTicket;
 import com.taiwanlottery.crawler.exception.CrawlerException;
 import com.taiwanlottery.crawler.util.StringUtils;
 import com.taiwanlottery.crawler.vo.Prize;
@@ -22,24 +22,24 @@ public class CrawlerService {
     private static final int MAX_TICKETS_SIZE = 40;
 
     public List<Ticket> crawlAll() throws CrawlerException {
-        List<TicketURL> ticketURLs = fetchTicketsURLs();
+        List<RawTicket> rawTickets = fetchTicketsURLs();
 
         List<Ticket> tickets = new ArrayList<>();
-        for (TicketURL ticketURL : ticketURLs) {
+        for (RawTicket rawTicket : rawTickets) {
             try {
-                tickets.add(fetchTicket(ticketURL));
+                tickets.add(completeTicket(rawTicket));
             } catch (CrawlerException ignored) {
-                System.out.println("bad ticket: " + ticketURL);
+                System.out.println("bad ticket: " + rawTicket);
             }
         }
 
         return tickets;
     }
 
-    private List<TicketURL> fetchTicketsURLs() throws CrawlerException {
+    private List<RawTicket> fetchTicketsURLs() throws CrawlerException {
         Elements tableRows = connect(TICKETS_HOME_URL).select(".tableFull tr");
 
-        List<TicketURL> ticketURLs = new ArrayList<>();
+        List<RawTicket> rawTickets = new ArrayList<>();
         for (int i = 0; i < MAX_TICKETS_SIZE * 4; i += 4) {
             String[] nameId = tableRows.get(i + 1).select("td:nth-child(1)").text().split("/");
             long bet = Long.parseLong(StringUtils.removeNonDigitCharacters(tableRows.get(i + 1).select("td:nth-child(2)").text()));
@@ -51,7 +51,7 @@ public class CrawlerService {
                 url = urls.get(1).attr("href");
             }
 
-            ticketURLs.add(TicketURL.builder()
+            rawTickets.add(RawTicket.builder()
                     .id(Integer.parseInt(nameId[1].trim()))
                     .name(nameId[0].trim())
                     .bet(bet)
@@ -59,17 +59,17 @@ public class CrawlerService {
                     .build());
         }
 
-        return ticketURLs;
+        return rawTickets;
     }
 
-    private Ticket fetchTicket(TicketURL ticketURL) throws CrawlerException {
+    private Ticket completeTicket(RawTicket rawTicket) throws CrawlerException {
         Ticket ticket = new Ticket();
-        ticket.setId(ticketURL.getId());
-        ticket.setName(ticketURL.getName());
-        ticket.setBet(ticketURL.getBet());
+        ticket.setId(rawTicket.getId());
+        ticket.setName(rawTicket.getName());
+        ticket.setBet(rawTicket.getBet());
 
-        Elements prizeTableData = connect(ticketURL.getUrl())
-                .select("#" + ticketURL.getId())
+        Elements prizeTableData = connect(rawTicket.getUrl())
+                .select("#" + rawTicket.getId())
                 .parents().get(1)
                 .select("tbody tr:not(.td_hm) td");
 

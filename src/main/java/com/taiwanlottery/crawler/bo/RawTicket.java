@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class TicketURL {
+public class RawTicket {
     private int id;
     private String name;
     private long bet;

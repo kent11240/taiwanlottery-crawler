@@ -1,6 +1,5 @@
-package com.taiwanlottery.crawler.vo;
+package com.taiwanlottery.crawler.model;
 
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;

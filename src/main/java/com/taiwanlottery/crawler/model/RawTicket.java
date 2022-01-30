@@ -1,4 +1,4 @@
-package com.taiwanlottery.crawler.bo;
+package com.taiwanlottery.crawler.model;
 
 import lombok.Builder;
 import lombok.Data;

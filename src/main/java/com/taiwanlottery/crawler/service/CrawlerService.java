@@ -1,10 +1,10 @@
 package com.taiwanlottery.crawler.service;
 
-import com.taiwanlottery.crawler.bo.RawTicket;
+import com.taiwanlottery.crawler.model.RawTicket;
 import com.taiwanlottery.crawler.exception.CrawlerException;
 import com.taiwanlottery.crawler.util.StringUtils;
-import com.taiwanlottery.crawler.vo.Prize;
-import com.taiwanlottery.crawler.vo.Ticket;
+import com.taiwanlottery.crawler.model.Prize;
+import com.taiwanlottery.crawler.model.Ticket;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;

@@ -10,6 +10,6 @@ public class LoggerConfig {
 
     @Bean
     public Logger logger() {
-        return LoggerFactory.getLogger("Logger");
+        return LoggerFactory.getLogger("TaiwanLotteryCrawlerLogger");
     }
 }

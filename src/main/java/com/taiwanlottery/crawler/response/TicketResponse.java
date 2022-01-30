@@ -3,29 +3,31 @@ package com.taiwanlottery.crawler.response;
 import com.taiwanlottery.crawler.model.Prize;
 import com.taiwanlottery.crawler.model.Statistics;
 import com.taiwanlottery.crawler.model.Ticket;
+import com.taiwanlottery.crawler.util.StringUtils;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
 public class TicketResponse {
-    private int id;
+    private String id;
     private String name;
-    private long bet;
-    private List<Prize> prizes;
-    private long totalAmount;
-    private Statistics statistics;
+    private String bet;
+    private String winRate;
+    private String earningRate;
+    private String expectedValue;
 
     public static TicketResponse of(Ticket ticket, Statistics statistics) {
         return TicketResponse.builder()
-                .id(ticket.getId())
+                .id(String.valueOf(ticket.getId()))
                 .name(ticket.getName())
-                .bet(ticket.getBet())
-                .prizes(ticket.getPrizes())
-                .totalAmount(ticket.getTotalAmount())
-                .statistics(statistics)
+                .bet(StringUtils.commaFormat(ticket.getBet()))
+                .winRate(StringUtils.percentageFormat(statistics.getWinRate()))
+                .earningRate(StringUtils.percentageFormat(statistics.getEarningRate()))
+                .expectedValue(StringUtils.commaPointFormat(statistics.getExpectedValue()))
                 .build();
     }
 }

@@ -13,8 +13,8 @@ public class TicketResponse {
     private double winRate;
     private double earningRate;
     private double expectedValue;
+    private double expectedValueRate;
     private double fthRate;
-    private double fthExpectedValue;
 
     public static TicketResponse of(Ticket ticket, Statistics statistics) {
         return TicketResponse.builder()
@@ -23,8 +23,8 @@ public class TicketResponse {
                 .winRate(statistics.getWinRate())
                 .earningRate(statistics.getEarningRate())
                 .expectedValue(statistics.getExpectedValue())
+                .expectedValueRate(statistics.getExpectedValueRate())
                 .fthRate(statistics.getFthRate())
-                .fthExpectedValue(statistics.getFthExpectedValue())
                 .build();
     }
 }

@@ -31,12 +31,13 @@ public class TicketService {
     }
 
     public Statistics statistics(Ticket ticket) {
+        double expectedValue = calculateExpectedValue(ticket);
         return Statistics.builder()
                 .winRate(calculateWinRate(ticket))
                 .earningRate(calculateEarningRate(ticket))
-                .expectedValue(calculateExpectedValue(ticket))
+                .expectedValue(expectedValue)
+                .expectedValueRate(expectedValue / ticket.getBet())
                 .fthRate(calculateFthRate(ticket))
-                .fthExpectedValue(calculateFthExpectedValue(ticket))
                 .build();
     }
 
@@ -65,13 +66,6 @@ public class TicketService {
         return ticket.getPrizes().stream().filter(prize -> prize.getWin() == 5000)
                 .findFirst()
                 .map(prize -> (double) prize.getAmount() / (double) ticket.getTotalAmount())
-                .orElse(0D);
-    }
-
-    private double calculateFthExpectedValue(Ticket ticket) {
-        return ticket.getPrizes().stream().filter(prize -> prize.getWin() == 5000)
-                .findFirst()
-                .map(prize -> (double) prize.getWin() * (double) prize.getAmount() / (double) ticket.getTotalAmount())
                 .orElse(0D);
     }
 }

@@ -9,4 +9,6 @@ public class Statistics {
     private double winRate;
     private double earningRate;
     private double expectedValue;
+    private double fthRate;
+    private double fthExpectedValue;
 }

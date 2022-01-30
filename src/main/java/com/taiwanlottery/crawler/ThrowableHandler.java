@@ -29,6 +29,6 @@ public class ThrowableHandler {
     @ExceptionHandler(TicketNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     void handleException(TicketNotFoundException e) {
-        logger.error("ticket not found.", e);
+        logger.error(String.format("ticket: %d not found.", e.getTicketId()), e);
     }
 }

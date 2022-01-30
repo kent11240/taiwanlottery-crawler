@@ -27,7 +27,7 @@ public class TicketService {
         return cache.get("tickets").stream()
                 .filter(ticket -> ticket.getId() == ticketId)
                 .findFirst()
-                .orElseThrow(TicketNotFoundException::new);
+                .orElseThrow(() -> new TicketNotFoundException(ticketId));
     }
 
     public Statistics statistics(Ticket ticket) {

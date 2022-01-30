@@ -1,6 +1,13 @@
 package com.taiwanlottery.crawler.exception;
 
+import lombok.Getter;
+
+@Getter
 public class TicketNotFoundException extends Exception {
-    public TicketNotFoundException() {
+
+    private final int ticketId;
+
+    public TicketNotFoundException(int ticketId) {
+        this.ticketId = ticketId;
     }
 }

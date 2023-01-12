@@ -11,6 +11,7 @@ public class TicketResponse {
     private String name;
     private long bet;
     private double winRate;
+    private double breakEvenRate;
     private double earningRate;
     private double expectedValue;
     private double expectedValueRate;
@@ -21,6 +22,7 @@ public class TicketResponse {
                 .name(ticket.getName())
                 .bet(ticket.getBet())
                 .winRate(statistics.getWinRate())
+                .breakEvenRate(statistics.getBreakEvenRate())
                 .earningRate(statistics.getEarningRate())
                 .expectedValue(statistics.getExpectedValue())
                 .expectedValueRate(statistics.getExpectedValueRate())

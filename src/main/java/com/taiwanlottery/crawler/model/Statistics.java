@@ -7,6 +7,7 @@ import lombok.Data;
 @Builder
 public class Statistics {
     private double winRate;
+    private double breakEvenRate;
     private double earningRate;
     private double expectedValue;
     private double expectedValueRate;

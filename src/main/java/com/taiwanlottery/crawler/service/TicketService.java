@@ -34,6 +34,7 @@ public class TicketService {
         double expectedValue = calculateExpectedValue(ticket);
         return Statistics.builder()
                 .winRate(calculateWinRate(ticket))
+                .breakEvenRate(calculateBreakEvenRate(ticket))
                 .earningRate(calculateEarningRate(ticket))
                 .expectedValue(expectedValue)
                 .expectedValueRate(expectedValue / ticket.getBet())
@@ -45,6 +46,14 @@ public class TicketService {
         double totalPrizeAmount = ticket.getPrizes().stream().mapToLong(Prize::getAmount).sum();
         double totalAmount = ticket.getTotalAmount();
         return totalPrizeAmount / totalAmount;
+    }
+
+    private double calculateBreakEvenRate(Ticket ticket) {
+        double totalEarningAmount = ticket.getPrizes().stream()
+                .filter(prize -> prize.getWin() >= ticket.getBet())
+                .mapToLong(Prize::getAmount).sum();
+        double totalAmount = ticket.getTotalAmount();
+        return totalEarningAmount / totalAmount;
     }
 
     private double calculateEarningRate(Ticket ticket) {

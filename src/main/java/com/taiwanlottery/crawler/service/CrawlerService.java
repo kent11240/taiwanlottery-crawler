@@ -8,6 +8,7 @@ import com.taiwanlottery.crawler.util.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Service;
 
 import javax.net.ssl.SSLContext;
@@ -28,6 +29,12 @@ public class CrawlerService {
     private static final String TICKETS_HOME_URL = "https://www.taiwanlottery.com.tw/info/instant/sale.aspx";
     private static final int MAX_TICKETS_SIZE = 40;
 
+    private final Logger logger;
+
+    public CrawlerService(Logger logger) {
+        this.logger = logger;
+    }
+
     public List<Ticket> crawlAll() throws CrawlerException {
         List<RawTicket> rawTickets = fetchTicketsURLs();
 
@@ -35,8 +42,8 @@ public class CrawlerService {
         for (RawTicket rawTicket : rawTickets) {
             try {
                 tickets.add(completeTicket(rawTicket));
-            } catch (CrawlerException ignored) {
-                System.out.println("bad ticket: " + rawTicket);
+            } catch (CrawlerException e) {
+                logger.error("bad ticket: " + rawTicket, e);
             }
         }
 

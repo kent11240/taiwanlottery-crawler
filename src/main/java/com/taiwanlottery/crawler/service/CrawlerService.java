@@ -1,6 +1,6 @@
 package com.taiwanlottery.crawler.service;
 
-import com.taiwanlottery.crawler.exception.CrawlerException;
+import com.taiwanlottery.crawler.exception.CrawlerServerException;
 import com.taiwanlottery.crawler.model.Prize;
 import com.taiwanlottery.crawler.model.RawTicket;
 import com.taiwanlottery.crawler.model.Ticket;
@@ -35,14 +35,14 @@ public class CrawlerService {
         this.logger = logger;
     }
 
-    public List<Ticket> crawlAll() throws CrawlerException {
+    public List<Ticket> crawlAll() throws CrawlerServerException {
         List<RawTicket> rawTickets = fetchTicketsURLs();
 
         List<Ticket> tickets = new ArrayList<>();
         for (RawTicket rawTicket : rawTickets) {
             try {
                 tickets.add(completeTicket(rawTicket));
-            } catch (CrawlerException e) {
+            } catch (CrawlerServerException e) {
                 logger.error("bad ticket: " + rawTicket, e);
             }
         }
@@ -50,7 +50,7 @@ public class CrawlerService {
         return tickets;
     }
 
-    private List<RawTicket> fetchTicketsURLs() throws CrawlerException {
+    private List<RawTicket> fetchTicketsURLs() throws CrawlerServerException {
         Elements tableRows = connect(TICKETS_HOME_URL).select(".tableFull tr");
 
         List<RawTicket> rawTickets = new ArrayList<>();
@@ -76,7 +76,7 @@ public class CrawlerService {
         return rawTickets;
     }
 
-    private Ticket completeTicket(RawTicket rawTicket) throws CrawlerException {
+    private Ticket completeTicket(RawTicket rawTicket) throws CrawlerServerException {
         Ticket ticket = new Ticket();
         ticket.setId(rawTicket.getId());
         ticket.setName(rawTicket.getName());
@@ -110,14 +110,14 @@ public class CrawlerService {
         return ticket;
     }
 
-    private Document connect(String url) throws CrawlerException {
+    private Document connect(String url) throws CrawlerServerException {
         try {
             return Jsoup.connect(url)
                     .maxBodySize(Integer.MAX_VALUE)
                     .sslSocketFactory(socketFactory())
                     .get();
         } catch (IOException e) {
-            throw new CrawlerException(e);
+            throw new CrawlerServerException(e);
         }
     }
 

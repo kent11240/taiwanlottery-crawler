@@ -1,6 +1,6 @@
 package com.taiwanlottery.crawler;
 
-import com.taiwanlottery.crawler.exception.CrawlerException;
+import com.taiwanlottery.crawler.exception.CrawlerServerException;
 import com.taiwanlottery.crawler.exception.TicketNotFoundException;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -19,9 +19,9 @@ public class ThrowableHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(CrawlerException.class)
+    @ExceptionHandler(CrawlerServerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    void handleException(CrawlerException e) {
+    void handleException(CrawlerServerException e) {
         logger.error("crawl failed.", e);
     }
 

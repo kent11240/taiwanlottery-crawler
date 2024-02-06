@@ -15,7 +15,7 @@ public class TicketService {
 
     private final LoadingCache<String, List<Ticket>> cache;
 
-    public TicketService(CrawlerService crawlerService, Caffeine<Object, Object> caffeine) {
+    public TicketService(CrawlerServiceV2 crawlerService, Caffeine<Object, Object> caffeine) {
         this.cache = caffeine.build(key -> crawlerService.crawlAll());
     }
 

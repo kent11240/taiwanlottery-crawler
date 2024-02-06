@@ -33,8 +33,7 @@ public class GoogleAuthorizeService {
     }
 
     private GoogleClientSecrets loadGoogleClientSecrets() throws CrawlerServerException {
-        InputStream in = GoogleAuthorizeService.class.getResourceAsStream(OAUTH_JSON_FILE_PATH);
-        try {
+        try (InputStream in = GoogleAuthorizeService.class.getResourceAsStream(OAUTH_JSON_FILE_PATH)) {
             return GoogleClientSecrets.load(GsonFactory.getDefaultInstance(), new InputStreamReader(Objects.requireNonNull(in)));
         } catch (IOException e) {
             throw new CrawlerServerException("load google client secret failed.", e);

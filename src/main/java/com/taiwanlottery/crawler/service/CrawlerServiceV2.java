@@ -6,7 +6,6 @@ import com.taiwanlottery.crawler.model.RawTicket;
 import com.taiwanlottery.crawler.model.Ticket;
 import com.taiwanlottery.crawler.model.official_api.Response;
 import com.taiwanlottery.crawler.util.StringUtils;
-import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
@@ -17,28 +16,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class CrawlerServiceV2 {
+public class CrawlerServiceV2 extends CrawlerService {
 
     private final JsoupService jsoupService;
-    private final Logger logger;
 
-    public List<Ticket> crawlAll() {
-        List<RawTicket> rawTickets = fetchTicketsURLs();
-
-        List<Ticket> tickets = new ArrayList<>();
-        for (RawTicket rawTicket : rawTickets) {
-            try {
-                tickets.add(completeTicket(rawTicket));
-            } catch (CrawlerServerException e) {
-                logger.error("bad ticket: " + rawTicket, e);
-            }
-        }
-
-        return tickets;
+    public CrawlerServiceV2(Logger logger, JsoupService jsoupService) {
+        super(logger);
+        this.jsoupService = jsoupService;
     }
 
-    private List<RawTicket> fetchTicketsURLs() {
+    @Override
+    List<RawTicket> fetchTicketsURLs() {
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://api.taiwanlottery.com/TLCAPIWeB/Instant/Result?ScratchName&Start_ListingDate&End_ListingDate&PageNum=1&PageSize=20&Type=1")
                 .build();
@@ -58,7 +46,8 @@ public class CrawlerServiceV2 {
                 .collect(Collectors.toList());
     }
 
-    private Ticket completeTicket(RawTicket rawTicket) throws CrawlerServerException {
+    @Override
+    Ticket completeTicket(RawTicket rawTicket) throws CrawlerServerException {
         Ticket ticket = new Ticket();
         ticket.setId(rawTicket.getId());
         ticket.setName(rawTicket.getName());
@@ -68,7 +57,6 @@ public class CrawlerServiceV2 {
         String iframeSrc = document.select("#lotto-news-iframe").attr("src");
 
         Document parse = jsoupService.parse(iframeSrc);
-        System.out.println(parse);
 
         Elements prizeTableData = parse
                 .select("#" + rawTicket.getId())

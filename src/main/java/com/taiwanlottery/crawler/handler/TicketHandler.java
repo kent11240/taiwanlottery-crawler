@@ -2,7 +2,7 @@ package com.taiwanlottery.crawler.handler;
 
 import com.taiwanlottery.crawler.exception.TicketNotFoundException;
 import com.taiwanlottery.crawler.model.Ticket;
-import com.taiwanlottery.crawler.response.TicketResponse;
+import com.taiwanlottery.crawler.dto.TicketResponse;
 import com.taiwanlottery.crawler.service.TicketService;
 import org.springframework.stereotype.Service;
 

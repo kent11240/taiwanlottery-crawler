@@ -1,8 +1,8 @@
 package com.taiwanlottery.crawler.service;
 
 import com.taiwanlottery.crawler.exception.CrawlerServerException;
-import com.taiwanlottery.crawler.model.MockyIoRequest;
-import com.taiwanlottery.crawler.model.MockyIoResponse;
+import com.taiwanlottery.crawler.dto.MockyIoRequest;
+import com.taiwanlottery.crawler.dto.MockyIoResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 

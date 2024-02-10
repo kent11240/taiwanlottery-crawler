@@ -1,4 +1,4 @@
-package com.taiwanlottery.crawler.response;
+package com.taiwanlottery.crawler.dto;
 
 import com.taiwanlottery.crawler.model.Statistics;
 import com.taiwanlottery.crawler.model.Ticket;
@@ -15,7 +15,7 @@ public class TicketResponse {
     private double earningRate;
     private double expectedValue;
     private double expectedValueRate;
-    private double fthRate;
+    private double happyRate;
 
     public static TicketResponse of(Ticket ticket, Statistics statistics) {
         return TicketResponse.builder()
@@ -26,7 +26,7 @@ public class TicketResponse {
                 .earningRate(statistics.getEarningRate())
                 .expectedValue(statistics.getExpectedValue())
                 .expectedValueRate(statistics.getExpectedValueRate())
-                .fthRate(statistics.getFthRate())
+                .happyRate(statistics.getHappyRate())
                 .build();
     }
 }

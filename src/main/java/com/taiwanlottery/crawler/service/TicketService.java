@@ -38,7 +38,7 @@ public class TicketService {
                 .earningRate(calculateEarningRate(ticket))
                 .expectedValue(expectedValue)
                 .expectedValueRate(expectedValue / ticket.getBet())
-                .fthRate(calculateFthRate(ticket))
+                .happyRate(calculateHappyRate(ticket))
                 .build();
     }
 
@@ -71,10 +71,12 @@ public class TicketService {
                 .sum();
     }
 
-    private double calculateFthRate(Ticket ticket) {
-        return ticket.getPrizes().stream().filter(prize -> prize.getWin() == 5000)
-                .findFirst()
-                .map(prize -> (double) prize.getAmount() / (double) ticket.getTotalAmount())
-                .orElse(0D);
+    private double calculateHappyRate(Ticket ticket) {
+        double totalHappyAmount = ticket.getPrizes().stream()
+                .filter(prize -> prize.getWin() >= Denomination.of(ticket.getBet()).getHappyThreshold()
+                        && prize.getWin() <= 5000)
+                .mapToLong(Prize::getAmount).sum();
+        double totalAmount = ticket.getTotalAmount();
+        return totalHappyAmount / totalAmount;
     }
 }

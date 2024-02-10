@@ -11,5 +11,5 @@ public class Statistics {
     private double earningRate;
     private double expectedValue;
     private double expectedValueRate;
-    private double fthRate;
+    private double happyRate;
 }

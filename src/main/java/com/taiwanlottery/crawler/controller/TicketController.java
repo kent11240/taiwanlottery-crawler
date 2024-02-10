@@ -2,7 +2,7 @@ package com.taiwanlottery.crawler.controller;
 
 import com.taiwanlottery.crawler.exception.TicketNotFoundException;
 import com.taiwanlottery.crawler.handler.TicketHandler;
-import com.taiwanlottery.crawler.response.TicketResponse;
+import com.taiwanlottery.crawler.dto.TicketResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
